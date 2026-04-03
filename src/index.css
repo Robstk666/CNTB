@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#f5f5f7] text-[#1d1d1f] antialiased selection:bg-[#0071e3] selection:text-white;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+
+  * {
+    text-transform: lowercase !important;
+  }
+
+  .uppercase-oea,
+  .uppercase-oea * {
+    text-transform: uppercase !important;
+  }
+}
+
+@layer utilities {
+  .apple-card {
+    @apply bg-white/70 backdrop-blur-2xl rounded-[24px] shadow-[0_8px_30px_rgb(0, 0, 0, 0.04)] border border-white/80 transition-all duration-300 ease-out;
+  }
+
+  .apple-card:hover {
+    @apply shadow-[0_20px_40px_rgb(0, 0, 0, 0.08)] -translate-y-1 bg-white/90 border-white;
+  }
+
+  .apple-button-primary {
+    @apply bg-[#0071e3] text-white rounded-full font-medium px-6 py-3 shadow-[0_4px_14px_rgba(0, 113, 227, 0.39)] hover:bg-[#0077ED] hover:shadow-[0_6px_20px_rgba(0, 113, 227, 0.23)] active:scale-95 transition-all duration-200 flex items-center justify-center;
+  }
+
+  .apple-button-secondary {
+    @apply bg-white/80 backdrop-blur-md text-[#1d1d1f] rounded-full font-medium px-6 py-3 shadow-[0_2px_10px_rgba(0, 0, 0, 0.04)] border border-gray-200/50 hover:bg-white hover:shadow-[0_4px_15px_rgba(0, 0, 0, 0.08)] active:scale-95 transition-all duration-200 flex items-center justify-center;
+  }
+
+  .apple-glass-header {
+    @apply bg-white/70 backdrop-blur-xl border-b border-gray-200/50 sticky top-0 z-50;
+  }
+
+  .apple-glass-footer {
+    @apply bg-white/70 backdrop-blur-xl border-t border-gray-200/50 sticky bottom-0 z-50;
+  }
+}
+
+/* ── Scan button animation ── */
+.scan-btn {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+/* Only the text word(s) get the clip-path erase */
+.scan-btn span:first-of-type {
+  animation: scan-cut 8s infinite linear;
+  display: inline-block;
+}
+
+/* Sharp scan line */
+.scan-btn::before {
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background-color: #0071e3;
+  top: -2px;
+  left: 0;
+  animation: scan-line 8s infinite linear;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Glow halo around line */
+.scan-btn::after {
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 10px;
+  border-radius: 4px;
+  background-color: rgba(0, 113, 227, 0.45);
+  top: -10px;
+  left: 0;
+  filter: blur(7px);
+  animation: scan-line 8s infinite linear;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/*
+  8s cycle:
+  0–0.5s  (0–6.25%)    : sweep 1 top→bottom — ERASES text
+  0.5–1.0s (6.25–12.5%): sweep 2 bottom→top — REVEALS text in its wake
+  1.0–8.0s (12.5–100%) : ~7s pause, static
+*/
+@keyframes scan-line {
+  0% {
+    top: -2px;
+    opacity: 1;
+  }
+
+  /* sweep 1: starts at top */
+  6.25% {
+    top: 100%;
+    opacity: 1;
+  }
+
+  /* sweep 1: ends at bottom */
+  12.5% {
+    top: -2px;
+    opacity: 1;
+  }
+
+  /* sweep 2: ends at top (went bottom→top) */
+  12.6% {
+    top: -2px;
+    opacity: 0;
+  }
+
+  /* line disappears */
+  100% {
+    top: -2px;
+    opacity: 0;
+  }
+
+  /* pause */
+}
+
+@keyframes scan-cut {
+  0% {
+    clip-path: inset(0 0 0 0);
+  }
+
+  /* fully visible */
+  6.25% {
+    clip-path: inset(100% 0 0 0);
+  }
+
+  /* sweep 1 done: erased (clipped from top) */
+  12.5% {
+    clip-path: inset(0 0 0 0);
+  }
+
+  /* sweep 2 done: revealed */
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+
+  /* hold during pause */
+}
